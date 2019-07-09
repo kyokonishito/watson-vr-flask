@@ -1,0 +1,145 @@
+コマンド一覧(コピペ用)
+< > のついている部分は自分の値に変更して実行してください。
+( )はコメントです。
+
+2. レポジトリのClone
+git clone https://github.com/kyokonishito/watson-vr-flask.git
+cd watson-vr-flask
+
+
+3. IBM Cloudへのログインと設定
+ibmcloud login
+(エンドポイントの選択が表示された場合は 5. us-southを選択してください)
+ibmcloud target --cf
+
+
+4.  IBM Cloud コンテナレジストリ のセットアップ
+ibmcloud cr namespace-add <namespace>
+
+(設定したnamespaceを以下にコピペしてください)
+<namespace>: <ここにコピペ>
+
+
+5. ワーカー・ノードのデプロイメントが完了したことを確認
+ibmcloud cs workers mycluster
+
+
+6. クラスター環境のセットアップ
+ibmcloud cs cluster-config mycluster
+(上記で出力されたexportまたはSETコマンドをコピペして実行)
+kubectl version --short
+
+
+7. クラスターにサービスを追加
+(<service_name>には例と同じものにしてあります。VisualRecognition01)
+ibmcloud service create watson_vision_combined lite VisualRecognition01
+
+(<visual_recognition_service_name>はVisualRecognition01としています）
+ibmcloud cs cluster-service-bind --cluster mycluster --namespace default --service VisualRecognition01
+
+(出力されたSecret Name(機密名)を以下にコピペしてください)
+visual_recognition_service　Secret Name: <ここにコピペ>
+
+kubectl get secrets --namespace=default
+
+
+8. Dockerイメージをビルド
+cd server
+
+(windowsの場合)
+copy ibm-credentials.env.sample ibm-credentials.env
+(macの場合)
+cp ibm-credentials.env.sample ibm-credentials.env
+
+(<namespace>は4でコピペしたご自身のnamespaceに置き換えてください、最後のピリオドを忘れずに!)
+ibmcloud cr build -t us.icr.io/<namespace>/watson-vr-flask:v1 .
+
+
+9. Kubernates マニフェストファイル watson-vr-flask.yml の編集
+(コンテナレジストリの名前空間確認)
+ibmcloud cr namespace-list 
+
+
+10.クラスターへのアプリケーションデプロイ
+kubectl apply -f  watson-vr-flask.yml
+
+podの状況確認
+kubectl get pods
+
+
+11.アプリケーションの動作確認
+ibmcloud cs workers mycluster
+
+http://<IPアドレス>:30047 
+
+
+(以下はオプション)
+12. UIデザインの変更(1)
+cd staic
+
+(Winの場合)
+copy index.html index_v1.html
+copy index.html index_v2.html
+
+(macの場合)
+cp index.html index_v1.html
+cp index.html index_v2.html
+
+12. UIデザインの変更(2)
+index_v2.html 16行目を<!-- -->で囲んでコメントアウトする(以下はコメントアウト後)
+<!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/cerulean/bootstrap.min.css" rel="stylesheet" integrity="sha384-C++cugH8+Uf86JbNOnQoBweHHAe/wVKN/mb0lTybu/NZ9sEYbd+BbbYtNpWYAsNP" crossorigin="anonymous"> -->
+
+12. UIデザインの変更(3)
+index_v2.html 20行目の<!-- -->を削除してコメントアウトを無効にする(以下は削除後)
+<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet" integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
+
+12. UIデザインの変更(4)
+(Winの場合)
+copy index_v2.html index.html
+
+(macの場合)
+cp index_v2.html index.html
+
+12. UIデザインの変更(5)
+(<namespace>は4でコピペしたご自身のnamespaceに置き換えてください、最後のピリオドを忘れずに!)
+cd ..
+ibmcloud cr build -t us.icr.io/<namespace>/watson-vr-flask:v2 .
+
+12. UIデザインの変更(6)
+(Winの場合)
+copy watson-vr-flask.yml watson-vr-flask_v2.yml
+
+(macの場合)
+cp watson-vr-flask.yml watson-vr-flask_v2.yml
+
+12. UIデザインの変更(7)
+(<namespace>は4でコピペしたご自身のnamespaceに置き換わっています。以下は変更後)
+image: us.icr.io/<namespace>/watson-vr-flask:v2
+
+12. UIデザインの変更(8)
+kubectl apply -f watson-vr-flask_v2.yml
+
+12. UIデザインの変更(9)
+kubectl apply -f watson-vr-flask.yml
+または
+kubectl rollout undo deployment deploy-watson-vr-deployment
+
+13.アプリケーションの削除
+kubectl delete deployment deploy-watson-vr-deployment
+kubectl delete service deploy-watson-vr-service
+
+
+14.イメージのの削除
+(<namespace>は4でコピペしたご自身のnamespaceに置き換えてください)
+ibmcloud cr image-rm us.icr.io/<namespace>/watson-vr-flask:v1
+ibmcloud cr image-rm us.icr.io/<namespace>/watson-vr-flask:v2
+
+
+15.サービスのアンバインド
+(<visual_recognition_service_name>はVisualRecognition01としています）
+ibmcloud cs cluster-service-unbind --cluster mycluster --namespace default --service VisualRecognition01
+
+
+16.コンテナレジストリの名前空間の削除
+(<namespace>は4でコピペしたご自身のnamespaceに置き換えてください)
+ibmcloud cr namespace-rm <namespace>
