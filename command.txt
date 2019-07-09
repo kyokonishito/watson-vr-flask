@@ -31,7 +31,7 @@ kubectl version --short
 
 
 7. クラスターにサービスを追加
-(<service_name>には例と同じものにしてあります。VisualRecognition01)
+(<visual_recognition_service_name>には例と同じものにしてあります。VisualRecognition01)
 ibmcloud service create watson_vision_combined lite VisualRecognition01
 
 (<visual_recognition_service_name>はVisualRecognition01としています）
@@ -63,19 +63,16 @@ ibmcloud cr namespace-list
 10.クラスターへのアプリケーションデプロイ
 kubectl apply -f  watson-vr-flask.yml
 
-podの状況確認
-kubectl get pods
-
 
 11.アプリケーションの動作確認
 ibmcloud cs workers mycluster
 
-http://<IPアドレス>:30047 
+http://<IPアドレス>:30000
 
 
 (以下はオプション)
 12. UIデザインの変更(1)
-cd staic
+cd static
 
 (Winの場合)
 copy index.html index_v1.html
@@ -143,3 +140,8 @@ ibmcloud cs cluster-service-unbind --cluster mycluster --namespace default --ser
 16.コンテナレジストリの名前空間の削除
 (<namespace>は4でコピペしたご自身のnamespaceに置き換えてください)
 ibmcloud cr namespace-rm <namespace>
+
+
+17. Visual Recognitionサービスの削除
+(<visual_recognition_service_name>はVisualRecognition01としています）
+ibmcloud service delete VisualRecognition01
