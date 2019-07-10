@@ -61,8 +61,8 @@ def draw_face_area(image_file, face_detect_res):
         draw.rectangle(xy=(x0, y0, x1, y1), outline=(0, 249, 0))
         draw.text(xy=(x0 + 5, y0 + 5), text=str(i), fill=(0, 249, 0), font=font)
 
-    buffer = BytesIO()  # メモリ上への仮保管先を生成
-    image.save(buffer, format="PNG")  # pillowのImage.saveメソッドで仮保管先へ保存
+    buffer = BytesIO()  
+    image.save(buffer, format="PNG")  
 
     base64Img = base64.b64encode(buffer.getvalue()).decode().replace("'", "")
 
