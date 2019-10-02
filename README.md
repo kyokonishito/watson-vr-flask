@@ -3,6 +3,7 @@ Python Flask上からWatson Visual Recognitionwith APIを呼び出して画像�
 
 IBM Kubernetes Service上で動かす方法は以下を参照ください:
 https://speakerdeck.com/kyokonishito/iks-watson-vr-flask
+(顔検出はVisual Recognitionから削除されたため、ソースから削除しました。上記改訂版は2016/09/09にUp予定)
 
 IBM Kubernetes Service以外のコンテナ環境で動作させる場合：
  - ibm-credentials.env.sampleを参考にしてAPI KEYとURLをセットして作成するか、IBM Cloud上のVisual RecongnitionのWeb管理ページからダウンロードしてibm-credentials.envをルートにおいてください。
@@ -11,4 +12,3 @@ IBM Kubernetes Service以外のコンテナ環境で動作させる場合：
 ローカル環境で動作させる場合は上記の設定に加えて以下を設定してください：  
  - 環境変数 `IBM_CREDENTIALS_FILE` に ibm-credentials.envをフルパスで設定してください。
 
-- 環境変数 `PLATFORM` に実行環境のOS, `MAC`または `WINDOWS`をセットしてください。LINUXの場合はapp.py内のFONTPATHを確認し、正しくない場合は修正してください。

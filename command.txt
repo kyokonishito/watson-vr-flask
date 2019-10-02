@@ -8,8 +8,8 @@ cd watson-vr-flask
 
 
 3. IBM Cloudへのログインと設定
-ibmcloud login
-(エンドポイントの選択が表示された場合は 5. us-southを選択してください)
+ibmcloud login -a cloud.ibm.com -r us-south -g Default
+
 ibmcloud target --cf
 
 
@@ -21,21 +21,21 @@ ibmcloud cr namespace-add <namespace>
 
 
 5. ワーカー・ノードのデプロイメントが完了したことを確認
-ibmcloud cs workers mycluster
+ibmcloud ks workers mycluster
 
 
 6. クラスター環境のセットアップ
-ibmcloud cs cluster-config mycluster
+ibmcloud ks cluster config mycluster
 (上記で出力されたexportまたはSETコマンドをコピペして実行)
 kubectl version --short
 
 
 7. クラスターにサービスを追加
 (<visual_recognition_service_name>には例と同じものにしてあります。VisualRecognition01)
-ibmcloud service create watson_vision_combined lite VisualRecognition01
+ibmcloud resource service-instance-create VisualRecognition01 watson-vision-combined lite us-south
 
 (<visual_recognition_service_name>はVisualRecognition01としています）
-ibmcloud cs cluster-service-bind --cluster mycluster --namespace default --service VisualRecognition01
+ibmcloud ks cluster service bind --cluster mycluster --namespace default --service VisualRecognition01
 
 (出力されたSecret Name(機密名)を以下にコピペしてください)
 visual_recognition_service　Secret Name: <ここにコピペ>
@@ -65,7 +65,7 @@ kubectl apply -f  watson-vr-flask.yml
 
 
 11.アプリケーションの動作確認
-ibmcloud cs workers mycluster
+ibmcloud ks workers mycluster
 
 http://<IPアドレス>:30000
 
@@ -134,7 +134,7 @@ ibmcloud cr image-rm us.icr.io/<namespace>/watson-vr-flask:v2
 
 15.サービスのアンバインド
 (<visual_recognition_service_name>はVisualRecognition01としています）
-ibmcloud cs cluster-service-unbind --cluster mycluster --namespace default --service VisualRecognition01
+ibmcloud ks cluster service unbind --cluster mycluster --namespace default --service VisualRecognition01
 
 
 16.コンテナレジストリの名前空間の削除
@@ -144,4 +144,4 @@ ibmcloud cr namespace-rm <namespace>
 
 17. Visual Recognitionサービスの削除
 (<visual_recognition_service_name>はVisualRecognition01としています）
-ibmcloud service delete VisualRecognition01
+ibmcloud resource service-instance-delete VisualRecognition01

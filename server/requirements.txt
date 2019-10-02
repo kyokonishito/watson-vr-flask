@@ -1,3 +1,2 @@
 flask >= 1.0.2, < 2.0
-pillow
 ibm-watson >= 3.0.4, < 4.0
